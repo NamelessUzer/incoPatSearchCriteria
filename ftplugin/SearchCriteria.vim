@@ -176,6 +176,8 @@ function! ClearData()
     let lines = getline(1, "$")
     call filter(lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
     " 过滤不需要的行
+    call map(lines, 'substitute(v:val, "\\d\\{2}\.\\d\\{2}%$", "", "g")')
+    " 删除行尾百分数
     call map(lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
     " 删除行首行尾空格并在前后都加上引号
     execute "normal! ggdG"
