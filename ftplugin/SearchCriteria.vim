@@ -112,7 +112,7 @@ function! SplitLineWithOR() range
     " 使用or连接多行
     let string = substitute(string, '^\_s\+\|\_s\+$', '', 'g')
     " 删除行首行尾空格和空行
-    let lines = split(string, '\(\s*\<or\>\s*\)\+')
+    let lines = split(string, '\c\(\s*\<or\>\s*\)\+')
     " 使用or分割字符串
     let lines = map(lines, '_indent . v:val')
     " 给每一行都加上缩进
