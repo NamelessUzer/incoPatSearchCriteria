@@ -176,13 +176,13 @@ function! ClearData()
     let lines = getline(1, "$")
     call filter(lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
     " 过滤不需要的行
-    call map(lines, 'substitute(v:val, "\\d\\{2}\.\\d\\{2}%$", "", "g")')
+    call map(lines, 'substitute(v:val, "\\d\\{1,2}\.\\d\\{1,2}%$", "", "g")')
     " 删除行尾百分数
     call map(lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
     " 删除行首行尾空格并在前后都加上引号
     execute "normal! ggdG"
     " 清空缓冲区
-    call setline(1, "intt = (" . join(lines, ' or ') . ")")
+    call setline(1, "ap = (" . join(lines, ' or ') . ")")
     " 将多个发明人or起来然后再括起来并加上发明人字段
     call setpos(".", [0, 1, 1, 0])
     " 将光标旋转在首行首列
