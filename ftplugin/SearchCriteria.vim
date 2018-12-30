@@ -184,9 +184,9 @@ function! ClearData()
     " 清空缓冲区
     " call setline(1, "ap = (" . join(lines, ' or ') . ")")
     " 将多个申请人用  or 连起来然后再括起来并加上申请人字段
-    len l0 = "ap = (" . join(lines, ' or ') . ")"
-    len l1 = "aee = (" . join(lines, ' or ') . ")"
-    len l01 = "(" . l0 . " or " . l1 . ")"
+    let l0 = "ap = (" . join(lines, ' or ') . ")"
+    let l1 = "aee = (" . join(lines, ' or ') . ")"
+    let l01 = "(" . l0 . " or " . l1 . ")"
     call setline(1, l01)
     " 将多个申请人用  or 连起来然后再括起来并加上申请人和受让人字段
     call setpos(".", [0, 1, 1, 0])
