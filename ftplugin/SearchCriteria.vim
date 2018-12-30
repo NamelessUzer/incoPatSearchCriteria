@@ -182,8 +182,13 @@ function! ClearData()
     " 删除行首行尾空格并在前后都加上引号
     execute "normal! ggdG"
     " 清空缓冲区
-    call setline(1, "ap = (" . join(lines, ' or ') . ")")
-    " 将多个发明人or起来然后再括起来并加上发明人字段
+    " call setline(1, "ap = (" . join(lines, ' or ') . ")")
+    " 将多个申请人用  or 连起来然后再括起来并加上申请人字段
+    len l0 = "ap = (" . join(lines, ' or ') . ")"
+    len l1 = "aee = (" . join(lines, ' or ') . ")"
+    len l01 = "(" . l0 . " or " . l1 . ")"
+    call setline(1, l01)
+    " 将多个申请人用  or 连起来然后再括起来并加上申请人和受让人字段
     call setpos(".", [0, 1, 1, 0])
     " 将光标旋转在首行首列
 endfunction
