@@ -112,7 +112,7 @@ function! SplitLineWithOR() range
     " 使用or连接多行
     let string = substitute(string, '^\_s\+\|\_s\+$', '', 'g')
     " 删除行首行尾空格和空行
-    let lines = split(string, '\c\(\s*\<or\>\s*\)\+')
+    let lines = uniq(split(string, '\c\(\s*\<or\>\s*\)\+'))
     " 使用or分割字符串
     let lines = map(lines, '_indent . v:val')
     " 给每一行都加上缩进
@@ -139,7 +139,7 @@ function! SortIPC() range
     " 将选中的内容的字符串列表连接成一个字符串
     let string = substitute(string, '^\s\+\|\s\+$', '', 'g')
     " 去除行首行尾的多余空格
-    let lines = sort(List2set(split(string, '\(\s*\<or\>\s*\)\+')))
+    let lines = sort(uniq(split(string, '\(\s*\<or\>\s*\)\+')))
     " 将长字符串使用 or 分割成列表，然后排序，千万不要改成空格来分割，因为关键词中有可能出现空格
     echom len(lines) . " IPC keywords found."
     let string = _indent . join(lines, ' or ')
@@ -158,19 +158,6 @@ function! SortIPC() range
     " 恢复光标位置
 endfunction
 
-function! List2set(lst)
-    let temp_dict = {}
-    for i in a:lst
-        let temp_dict[i] = v:true
-    endfor
-    return keys(temp_dict)
-endfunction
-
-" let lst = [1, 2, 1, 3]
-" echom lst
-" echo List2set(lst)
-" 列表不能用echom显示，只能用echo，囧
-
 function! ClearData()
     " 此函数用于将从incoPat的筛选器中复制出的发明人变换成检索式，查全查准的时候有用
     let lines = getline(1, "$")
@@ -180,6 +167,8 @@ function! ClearData()
     " 删除行尾百分数
     call map(lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
     " 删除行首行尾空格并在前后都加上引号
+    call sort(uniq(lines))
+    " 去重并排序
     execute "normal! ggdG"
     " 清空缓冲区
     " call setline(1, "ap = (" . join(lines, ' or ') . ")")
@@ -190,7 +179,7 @@ function! ClearData()
     call setline(1, l01)
     " 将多个申请人用  or 连起来然后再括起来并加上申请人和受让人字段
     call setpos(".", [0, 1, 1, 0])
-    " 将光标旋转在首行首列
+    " 将光标放置在首行首列
 endfunction
 
 function! GetElements() range
@@ -208,6 +197,8 @@ function! GetElements() range
     " 删除行首及行尾的空格
     let lines = filter(lines, 'v:val !~ "^\\s*$"')
     " 移除空行
+    call uniq(lines)
+    " 去重
     let @+ = join(lines, "\n")
     " 使用换行符号连接多个行并且复制到系统剪贴板
     echo len(lines) . " 行检索要素已经被复制到剪贴板！"
