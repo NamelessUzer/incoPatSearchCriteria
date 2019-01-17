@@ -198,8 +198,9 @@ function! GenerateListFromSC()
     " 此函数用于将检索式中的申请人变换成申请人列表并排序，每个申请人一行
     let l:save_register_plus = @z
     let l:save_register_unnamed = @"
-    execute 'normal! gg/ap\s*=\s*(/e<cr>n"zyi)ggdG'
+    execute 'normal! gg/ap\s*=\s*(/e' . "\<cr>" . '"zyi)ggdG'
     let l:lines = sort(uniq(split(trim(@z), '\c\(\s*\<or\>\s*\)\+'), 'i'), "i")
+    " echo l:lines
     " 使用or分割字符串并去重和排序
     call map(l:lines, 'substitute(v:val, "\\w\\+", "\\L\\u&", "g")')
     call setline(1, l:lines)
