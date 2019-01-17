@@ -7,11 +7,10 @@ augroup filetype_SearchCriteria
     nnoremap <localleader>e :call GetElements()<cr>
     " 从检索式生成检索要素（去除括号， and or not = 等字符)
     nnoremap <localleader>c :call Copy_SearchCriteria_oneline()<cr>
-    nnoremap <localleader>d :normal! "hebd2f "<cr>
-    " 光标旋转在or上，可以一并删除or及后面紧跟着的一个单词
     " nnoremap <localleader>G :set operatorfunc = SortOperator<cr>G@
-    nnoremap <localleader>q mqbi"<esc>ea"<esc>`q
-    nnoremap <localleader>f :call ClearData()<cr>
+    nnoremap <localleader>f :call GenerateSCFromList()<cr>
+    nnoremap <localleader>F :call GenerateListFromSC()<cr>
+    " nnoremap <localleader>F :normal! gg/ap\s*=\s*(/e<cr>n"zyi)ggdG"zP<cr>
 
     iabbrev 刷业务 not
     iabbrev 巨 and
@@ -120,7 +119,7 @@ function! SplitLineWithOR() range
     " 使用or连接多行
     let l:string = substitute(l:string, '^\_s\+\|\_s\+$', '', 'g')
     " 删除行首行尾空格和空行
-    let l:lines = uniq(split(l:string, '\c\(\s*\<or\>\s*\)\+'))
+    let l:lines = uniq(split(l:string, '\c\(\s*\<or\>\s*\)\+'), "i")
     " 使用or分割字符串
     let l:lines = map(lines, 'l:_indent . v:val')
     " 给每一行都加上缩进
@@ -148,7 +147,7 @@ function! SortIPC() range
     " 将选中的内容的字符串列表连接成一个字符串
     let l:string = substitute(l:string, '^\s\+\|\s\+$', '', 'g')
     " 去除行首行尾的多余空格
-    let l:lines = sort(uniq(split(l:string, '\(\s*\<or\>\s*\)\+')))
+    let l:lines = sort(uniq(split(l:string, '\(\s*\<or\>\s*\)\+'), "i"), "i")
     " 将长字符串使用 or 分割成列表，然后排序，千万不要改成空格来分割，因为关键词中有可能出现空格
     echom len(l:lines) . " IPC keywords found."
     let l:string = l:_indent . join(l:lines, ' or ')
@@ -167,8 +166,8 @@ function! SortIPC() range
     " 恢复光标位置
 endfunction
 
-function! ClearData()
-    " 此函数用于将从incoPat的筛选器中复制出的发明人变换成检索式，查全查准的时候有用
+function! GenerateSCFromList()
+    " 此函数用于将从incoPat的筛选器中复制出的申请人/发明人变换成检索式，查全查准的时候有用
     let l:lines = getline(1, "$")
     call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
     " 过滤不需要的行
@@ -176,7 +175,7 @@ function! ClearData()
     " 删除行尾百分数
     call map(l:lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
     " 删除行首行尾空格并在前后都加上引号
-    call sort(uniq(l:lines))
+    call sort(uniq(l:lines, "i"), "i")
     " 去重并排序
     execute "normal! ggdG"
     " 清空缓冲区
@@ -195,6 +194,23 @@ function! ClearData()
     unlet l:l01
 endfunction
 
+function! GenerateListFromSC()
+    " 此函数用于将检索式中的申请人变换成申请人列表并排序，每个申请人一行
+    let l:save_register_plus = @z
+    let l:save_register_unnamed = @"
+    execute 'normal! gg/ap\s*=\s*(/e<cr>n"zyi)ggdG'
+    let l:lines = sort(uniq(split(trim(@z), '\c\(\s*\<or\>\s*\)\+'), 'i'), "i")
+    " 使用or分割字符串并去重和排序
+    call map(l:lines, 'substitute(v:val, "\\w\\+", "\\L\\u&", "g")')
+    call setline(1, l:lines)
+    " 回写进 buffer
+    let @z = l:save_register_plus
+    let @" = l:save_register_unnamed
+    unlet l:save_register_plus
+    unlet l:save_register_unnamed
+    unlet l:lines
+endfunction
+
 function! GetElements() range
     " 此函数用来从检索式中抽取检索要素
     let l:lines = getline(a:firstline, a:lastline)
@@ -210,7 +226,7 @@ function! GetElements() range
     " 删除行首及行尾的空格
     let l:lines = filter(l:lines, 'v:val !~ "^\\s*$"')
     " 移除空行
-    call uniq(l:lines)
+    call uniq(l:lines, "i")
     " 去重
     let @+ = join(l:lines, "\n")
     " 使用换行符号连接多个行并且复制到系统剪贴板
