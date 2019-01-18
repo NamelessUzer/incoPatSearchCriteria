@@ -39,7 +39,7 @@ function! Beauty_SearchCriteria()
     let l:unnamed = getpos('"')
     let l:lines = getline(1, '$')
     " 复制缓冲区中所有内容到变量，方便进行后续操作
-    map(l:lines, s:PrettyLine(v:val))
+    call map(l:lines, 's:PrettyLine(v:val)')
     " 使用Pretty_SearchCriteria函数美化检索式
     execute("%delete")
     " 清空缓冲区
@@ -60,7 +60,7 @@ function! Copy_SearchCriteria_oneline()
     let l:lines = getline(1, '$')
     " 复制缓冲区中所有内容到变量，方便进行后续操作
     " let l:lines = Pretty_SearchCriteria(l:lines)
-    map(l:lines, s:PrettyLine(v:val))
+    call map(l:lines, 's:PrettyLine(v:val)')
     " 使用Pretty_SearchCriteria函数美化检索式
     let l:string = join(l:lines, "\n")
     let l:string = substitute(l:string, '\_s\+', " ", "g")
@@ -82,6 +82,7 @@ function! JoinLinesWithOR() range
     let l:unnamed = getreg('"')
     " silent execute "kq"
     " 标记当前位置，同normal! mq，优点是更为简短
+    "
     if a:firstline ==# a:lastline
         if a:lastline ==# line('$')
             return 0
@@ -89,7 +90,7 @@ function! JoinLinesWithOR() range
             let l:lastline = a:lastline + 1
         endif
     else
-        let l:lstline = a:lastline
+        let l:lastline = a:lastline
     endif
 
     " 将多个or替换为一个or，用or连接行时常出现这一错误
@@ -97,7 +98,7 @@ function! JoinLinesWithOR() range
     " 获取缩进值备用
     let l:lines = getline(a:firstline, l:lastline)
     " let l:lines = map(l:lines, 'substitute(v:val, "^\\_s\\+\\|\\_s\\+$", "", "g")')
-    map(l:lines, trim(v:val))
+    call map(l:lines, 'trim(v:val)')
     " 删除行首行尾空格和空行
     let l:string = join(l:lines, ' or ')
     " 使用or连接多行
@@ -123,11 +124,11 @@ function! SplitLineWithOR() range
     let l:string = join(getline(a:firstline, a:lastline), ' or ')
     " 使用or连接多行
     " let l:string = substitute(l:string, '^\_s\+\|\_s\+$', '', 'g')
-    map(l:lines, trim(v:val))
+    let l:string = trim(l:string)
     " 删除行首行尾空格和空行
     let l:lines = uniq(split(l:string, '\c\(\s*\<or\>\s*\)\+'), "i")
     " 使用or分割字符串
-    map(l:lines, l:_indent . v:val)
+    call map(l:lines, 'l:_indent . v:val')
     " 给每一行都加上缩进
     silent execute a:firstline . "," . a:lastline . 'delete'
     " 删除用or分割前的多行
@@ -155,7 +156,7 @@ function! SortIPC() range
     let l:string = join(l:lines, ' or ')
     " 将选中的内容的字符串列表连接成一个字符串
     " let l:string = substitute(l:string, '^\s\+\|\s\+$', '', 'g')
-    map(l:lines, trim(v:val))
+    call map(l:lines, 'trim(v:val)')
     " 删除行首行尾的多余空格
     let l:lines = sort(uniq(split(l:string, '\(\s*\<or\>\s*\)\+'), "i"), "i")
     " 将长字符串使用 or 分割成列表，然后排序，千万不要改成空格来分割，因为关键词中有可能出现空格
@@ -240,7 +241,7 @@ function! GetElements() range
     let l:lines = map(l:lines, 'substitute(v:val, "\\s\\+", " ", "g")')
     " 多个连续的空格替换为单个空格
     " let l:lines = map(l:lines, 'substitute(v:val, "^\\s\\+\\|\\s\\+$", "", "g")')
-    map(l:lines, trim(v:val))
+    call map(l:lines, 'trim(v:val)')
     " 删除行首及行尾的空格
     let l:lines = filter(l:lines, 'v:val !~ "^\\s*$"')
     " 移除空行
