@@ -147,7 +147,7 @@ endfunction
 
 function! SortIPC() range
     let l:unnamed = getreg('"')
-    execute "normal! mq"
+    normal! mq
     " 保存当前光标的位置，恢复用
     let l:_indent = repeat(" ", indent(a:firstline))
     " 获取缩进长度并转换为对应长度的字符串备用
@@ -169,7 +169,7 @@ function! SortIPC() range
     if a:firstline < a:lastline
         silent execute (a:firstline + 1) . "delete" . (a:lastline - a:firstline)
     endif
-    execute "normal! `q"
+    normal! `q
     " 恢复光标位置
     call setreg('"', l:unnamed)
     unlet l:_indent
