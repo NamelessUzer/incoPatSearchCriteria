@@ -163,7 +163,7 @@ function! SortIPC() range
     echom len(l:lines) . " IPC keywords found."
     let l:string = l:_indent . join(l:lines, ' or ')
     " 将列表使用or连接起来，将加上之前保存的缩进量，形成新的行
-    setline(line('.'), l:string)
+    call setline(line('.'), l:string)
     " 使用setline函数替换原来的行（不需要先添加行，再用delete删除行）
     " silent delete"可以用这条命令删除行，这里并不需要
     if a:firstline < a:lastline
