@@ -1,15 +1,14 @@
 augroup filetype_SearchCriteria
     autocmd!
     " nnoremap <localleader>b :call Beauty()<cr>
-    " nnoremap <localleader>o :call JoinLinesWithOR()<cr>
-    " nnoremap <localleader>s :call SplitLineWithOR()<cr>
-    " nnoremap <localleader>i :call SortIPC()<cr>
-    " nnoremap <localleader>e :call GetElements()<cr>
+    " nnoremap <localleader>o :call SearchCriteria#JoinLinesWithOR()<cr>
+    " nnoremap <localleader>s :call SearchCriteria#SplitLineWithOR()<cr>
+    " nnoremap <localleader>i :call SearchCriteria#SortIPC()<cr>
+    " nnoremap <localleader>e :call SearchCriteria#GetElements()<cr>
     " 从检索式生成检索要素（去除括号， and or not = 等字符)
-    " nnoremap <localleader>c :call Copy_oneline()<cr>
-    " nnoremap <localleader>f :call GenerateSCFromList()<cr>
-    " nnoremap <localleader>F :call GenerateListFromSC()<cr>
-    " nnoremap <localleader>F :normal! gg/ap\s*=\s*(/e<cr>n"zyi)ggdG"zP<cr>
+    " nnoremap <localleader>c :call SearchCriteria#Copy_oneline()<cr>
+    " nnoremap <localleader>f :call SearchCriteria#GenerateSCFromList()<cr>
+    " nnoremap <localleader>F :call SearchCriteria#GenerateListFromSC()<cr>
 
     iabbrev 刷业务 not
     iabbrev 巨 and
@@ -32,7 +31,7 @@ function! s:PrettyLine(line)
     return l:line
 endfunction
 
-function! Beauty()
+function! SearchCriteria#Beauty()
     let l:save_cursor = getpos(".")
     " 备份光标位置
     let l:unnamed = getpos('"')
@@ -53,7 +52,7 @@ function! Beauty()
     unlet l:lines
 endfunction
 
-function! Copy_oneline()
+function! SearchCriteria#Copy_oneline()
     " silent execute 'normal! ggVG"ay'
     " 复制缓冲区中所有内容到寄存器a，方便进行后续操作，不方便已经放弃使用这一方法
     let l:lines = getline(1, '$')
@@ -75,7 +74,7 @@ function! Copy_oneline()
 endfunction
 
 
-function! JoinLinesWithOR() range
+function! SearchCriteria#JoinLinesWithOR() range
     let l:save_cursor = getpos(".")
     " 标记当前位置
     let l:unnamed = getreg('"')
@@ -115,7 +114,7 @@ function! JoinLinesWithOR() range
 endfunction
 
 
-function! SplitLineWithOR() range
+function! SearchCriteria#SplitLineWithOR() range
     let l:save_cursor = getpos(".")
     let l:unnamed = getreg('"')
     let l:_indent = repeat(" ", indent(a:firstline))
@@ -144,7 +143,7 @@ function! SplitLineWithOR() range
     " 释放过程中用到的变量
 endfunction
 
-function! SortIPC() range
+function! SearchCriteria#SortIPC() range
     let l:unnamed = getreg('"')
     normal! mq
     " 保存当前光标的位置，恢复用
@@ -178,7 +177,7 @@ function! SortIPC() range
     " 释放过程中用到的变量
 endfunction
 
-function! GenerateSCFromList()
+function! SearchCriteria#GenerateSCFromList()
     let l:unnamed = getreg('"')
     " 此函数用于将从incoPat的筛选器中复制出的申请人/发明人变换成检索式，查全查准的时候有用
     let l:lines = getline(1, "$")
@@ -210,7 +209,7 @@ function! GenerateSCFromList()
     unlet l:unnamed
 endfunction
 
-function! GenerateListFromSC()
+function! SearchCriteria#GenerateListFromSC()
     " 此函数用于将检索式中的申请人变换成申请人列表并排序，每个申请人一行
     let l:save_register_plus = @z
     let l:save_register_unnamed = @"
@@ -228,7 +227,7 @@ function! GenerateListFromSC()
     unlet l:lines
 endfunction
 
-function! GetElements() range
+function! SearchCriteria#GetElements() range
     " 此函数用来从检索式中抽取检索要素
     let l:lines = getline(a:firstline, a:lastline)
     let l:lines = map(l:lines, 'substitute(v:val, "\\(r\\|ab\\|ab-otlang\\|ab-ts\\|abo\\|ad\\|adm\\|ady\\|aee\\|aeenor\\|agc\\|all\\|an\\|ann\\|aor\\|ap\\|ap-add\\|ap-country\\|ap-or\\|ap-ot\\|ap-otadd\\|ap-pc\\|ap-province\\|ap-ts\\|ap-type\\|apnor\\|assign-city\\|assign-country\\|assign-date\\|assign-flag\\|assign-party\\|assign-state\\|assign-text\\|assignee-add\\|assignee-cadd\\|assignyear\\|at\\|at-add\\|at-city\\|at-country\\|at-state\\|auth\\|bclas1\\|bclas2\\|bclas3\\|cf\\|cfn\\|city\\|claim\\|claim-en\\|claim-or\\|claim-ts\\|class\\|cn-dc\\|county\\|cp-dc\\|cpc\\|cpc-class\\|cpc-group\\|cpc-section\\|cpc-subclass\\|cpc-subgroup\\|ct\\|ct-ad\\|ct-ap\\|ct-auth\\|ct-code\\|ct-no\\|ct-pd\\|ct-times\\|ctfw\\|ctfw-ad\\|ctfw-ap\\|ctfw-auth\\|ctfw-no\\|ctfw-pd\\|ctfw-times\\|ctnp\\|ctyear\\|customs-flag\\|des\\|des-or\\|doc-dc\\|ecd\\|ecla\\|ecla-class\\|ecla-group\\|ecla-section\\|ecla-subclass\\|ecla-subgroup\\|ex\\|ex-time\\|expiry-date\\|fa-country\\|fam-dc\\|fc-dc\\|fct\\|fct-ap\\|fct-times\\|fctfw\\|fctfw-ap\\|fctfw-times\\|fi\\|filing-lang\\|ft\\|full\\|grant-date\\|ian\\|if\\|ifn\\|in\\|in-add\\|in-ap\\|in-city\\|in-country\\|in-state\\|ipc\\|ipc-class\\|ipc-group\\|ipc-main\\|ipc-section\\|ipc-subclass\\|ipc-subgroup\\|ipcm-class\\|ipcm-group\\|ipcmaintt\\|ipcm-section\\|ipcm-subclass\\|ipn\\|lawtxt\\|lee\\|lee-current\\|lg\\|lgc\\|lgd\\|lge\\|lgf\\|lgi-case\\|lgi-court\\|lgi-date\\|lgi-defendant\\|lgi-firm\\|lgi-flag\\|lgi-judge\\|lgi-no\\|lgi-party\\|lgi-plantiff\\|lgi-region\\|lgi-text\\|lgi-ti\\|lgi-type\\|lgiyear\\|licence-flag\\|license-cs\\|license-date\\|license-no\\|license-sd\\|license-stage\\|license-td\\|license-type\\|licenseyear\\|loc\\|lor\\|mf\\|mfn\\|no-claim\\|number\\|page\\|patent-life\\|patentee\\|patenteenor\\|pc-cn\\|pd\\|pdm\\|pdy\\|pee\\|pee-current\\|pfex-time\\|phc\\|pledge-cd\\|pledge-date\\|pledge-no\\|pledge-rd\\|pledge-stage\\|pledge-term\\|pledge-type\\|pledgeyear\\|plege-flag\\|pn\\|pnc\\|pnk\\|pnn\\|por\\|pr\\|pr-au\\|pr-date\\|prd\\|prn\\|pryear\\|pt\\|pu-date\\|re-ap\\|ree-flag\\|ref-dc\\|reward-level\\|reward-name\\|reward-session\\|ri-ae\\|ri-ap\\|ri-basis\\|ri-date\\|ri-inernal\\|ri-leader\\|ri-me\\|ri-num\\|ri-point\\|ri-text\\|ri-type\\|riyear\\|status\\|status-lite\\|std-company\\|std-etsi\\|std-flag\\|std-num\\|subex-date\\|ti\\|ti-otlang\\|ti-ts\\|tiab\\|tiabc\\|tio\\|uc\\|uc-main\\|vlstar\\|who\\|ap\\|ap-or\\|ap-ot\\|ap-ts\\|apnor\\|aee\\|aor\\|assign-party\\|aeenor\\|ap-otadd\\|in\\|lor\\|lee\\|lgi-party\\|at\\|agc\\|re-ap\\|in-ap\\|ri-me\\|ri-ae\\|ri-leader\\|por\\|pee\\|ex\\|ap-type\\|who\\|patentee\\|patenteenor\\|aptt\\|ap-ortt\\|ap-ottt\\|ap-tstt\\|apnortt\\|aeett\\|aortt\\|assign-partytt\\|aeenortt\\|ap-otaddtt\\|intt\\|lortt\\|leett\\|lgi-partytt\\|attt\\|agctt\\|re-aptt\\|in-aptt\\|ri-mett\\|ri-aett\\|ri-leadertt\\|portt\\|peett\\|extt\\|ap-typett\\|whott\\|patenteett\\|patenteenortt\\)\\s*=", " ", "g")')
