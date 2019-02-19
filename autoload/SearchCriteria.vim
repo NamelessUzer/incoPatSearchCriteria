@@ -10,11 +10,18 @@ augroup filetype_SearchCriteria
     " nnoremap <localleader>f :call SearchCriteria#GenerateSCFromList()<cr>
     " nnoremap <localleader>F :call SearchCriteria#GenerateListFromSC()<cr>
 
-    iabbrev 刷业务 not
-    iabbrev 巨 and
-    iabbrev 煌 or
-    iabbrev （ (
-    iabbrev ） )
+    " for Wubi input method
+    " iabbrev 巨 and
+    " iabbrev 煌 or
+    " iabbrev 刷业务 not
+
+    " for Pinyin input method
+    " iabbrev 安定 and
+    " iabbrev 偶然 or
+    " iabbrev 农田 not
+
+    " iabbrev （ (
+    " iabbrev ） )
 augroup END
 
 function! s:PrettyLine(line)
