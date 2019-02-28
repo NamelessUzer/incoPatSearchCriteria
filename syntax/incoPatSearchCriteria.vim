@@ -1,5 +1,5 @@
 " Vim syntax file
-" Language:	sc
+" Language:	Search Criteria
 " Maintainer:	Lin Kun <ssfjhh at gmail.com>
 " Last Change:	2017 Oct 15
 
@@ -31,4 +31,4 @@ highlight link scComment Comment
 highlight link scString String
 highlight scQuote ctermfg=green guifg=green
 
-let b:current_syntax = "SearchCriteria"
+let b:current_syntax = "incoPatSearchCriteria"

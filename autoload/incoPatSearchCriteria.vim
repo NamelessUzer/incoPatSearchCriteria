@@ -1,14 +1,14 @@
-augroup filetype_SearchCriteria
+augroup filetype_incoPatSearchCriteria
     autocmd!
     " nnoremap <localleader>b :call Beauty()<cr>
-    " nnoremap <localleader>o :call SearchCriteria#JoinLinesWithOR()<cr>
-    " nnoremap <localleader>s :call SearchCriteria#SplitLineWithOR()<cr>
-    " nnoremap <localleader>i :call SearchCriteria#SortIPC()<cr>
-    " nnoremap <localleader>e :call SearchCriteria#GetElements()<cr>
+    " nnoremap <localleader>o :call incoPatSearchCriteria#JoinLinesWithOR()<cr>
+    " nnoremap <localleader>s :call incoPatSearchCriteria#SplitLineWithOR()<cr>
+    " nnoremap <localleader>i :call incoPatSearchCriteria#SortIPC()<cr>
+    " nnoremap <localleader>e :call incoPatSearchCriteria#GetElements()<cr>
     " 从检索式生成检索要素（去除括号， and or not = 等字符)
-    " nnoremap <localleader>c :call SearchCriteria#Copy_oneline()<cr>
-    " nnoremap <localleader>f :call SearchCriteria#GenerateSCFromList()<cr>
-    " nnoremap <localleader>F :call SearchCriteria#GenerateListFromSC()<cr>
+    " nnoremap <localleader>c :call incoPatSearchCriteria#Copy_oneline()<cr>
+    " nnoremap <localleader>f :call incoPatSearchCriteria#GenerateSCFromList()<cr>
+    " nnoremap <localleader>F :call incoPatSearchCriteria#GenerateListFromSC()<cr>
 
     " for Wubi input method
     " iabbrev 巨 and
@@ -37,7 +37,7 @@ function! s:PrettyLine(line)
     return l:line
 endfunction
 
-function! SearchCriteria#Beauty()
+function! incoPatSearchCriteria#Beauty()
     let l:saveCursor = getpos(".")
     let l:unnamed = getreg('"')
     let l:lines = getline(1, '$')
@@ -52,7 +52,7 @@ function! SearchCriteria#Beauty()
     unlet l:lines
 endfunction
 
-function! SearchCriteria#Copy_oneline()
+function! incoPatSearchCriteria#Copy_oneline()
     let l:lines = getline(1, '$')
     call map(l:lines, 's:PrettyLine(v:val)')
     let l:string = join(l:lines, "\n")
@@ -60,12 +60,12 @@ function! SearchCriteria#Copy_oneline()
     let l:string = substitute(l:string, '[\(\[]\zs\_s\+', "", "g")
     let l:string = substitute(l:string, '\_s\+\ze[\)\]]', "", "g")
     let @+ = substitute(l:string, '^\_s\+\|\_s\+$', "", "g")
-    echom "Oneline-SearchCriteria has been copied to clipboard!"
+    echom "Oneline-incoPatSearchCriteria has been copied to clipboard!"
     unlet l:lines
 endfunction
 
 
-function! SearchCriteria#JoinLinesWithOR() range
+function! incoPatSearchCriteria#JoinLinesWithOR() range
     let l:saveCursor = getpos(".")
     let l:unnamed = getreg('"')
     if a:firstline ==# a:lastline
@@ -95,7 +95,7 @@ function! SearchCriteria#JoinLinesWithOR() range
 endfunction
 
 
-function! SearchCriteria#SplitLineWithOR() range
+function! incoPatSearchCriteria#SplitLineWithOR() range
     let l:saveCursor = getpos(".")
     let l:unnamed = getreg('"')
     let l:_indent = repeat(" ", indent(a:firstline))
@@ -115,7 +115,7 @@ function! SearchCriteria#SplitLineWithOR() range
     unlet l:unnamed
 endfunction
 
-function! SearchCriteria#SortIPC() range
+function! incoPatSearchCriteria#SortIPC() range
     let l:savePos = getpos(".")
     let l:unnamed = getreg('"')
     let l:_indent = repeat(" ", indent(a:firstline))
@@ -137,7 +137,7 @@ function! SearchCriteria#SortIPC() range
     unlet l:unnamed
 endfunction
 
-function! SearchCriteria#GenerateSCFromList()
+function! incoPatSearchCriteria#GenerateSCFromList()
     let l:unnamed = getreg('"')
     let l:lines = getline(1, "$")
     call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
@@ -158,7 +158,7 @@ function! SearchCriteria#GenerateSCFromList()
     unlet l:unnamed
 endfunction
 
-function! SearchCriteria#GenerateListFromSC()
+function! incoPatSearchCriteria#GenerateListFromSC()
     let l:save_register_plus = @z
     let l:save_register_unnamed = @"
     execute 'normal! gg/ap\s*=\s*(/e' . "\<cr>" . '"zyi)ggdG'
@@ -172,7 +172,7 @@ function! SearchCriteria#GenerateListFromSC()
     unlet l:lines
 endfunction
 
-function! SearchCriteria#GetElements() range
+function! incoPatSearchCriteria#GetElements() range
     let l:lines = getline(a:firstline, a:lastline)
     let l:lines = map(l:lines, 'substitute(v:val, "\\(r\\|ab\\|ab-otlang\\|ab-ts\\|abo\\|ad\\|adm\\|ady\\|aee\\|aeenor\\|agc\\|all\\|an\\|ann\\|aor\\|ap\\|ap-add\\|ap-country\\|ap-or\\|ap-ot\\|ap-otadd\\|ap-pc\\|ap-province\\|ap-ts\\|ap-type\\|apnor\\|assign-city\\|assign-country\\|assign-date\\|assign-flag\\|assign-party\\|assign-state\\|assign-text\\|assignee-add\\|assignee-cadd\\|assignyear\\|at\\|at-add\\|at-city\\|at-country\\|at-state\\|auth\\|bclas1\\|bclas2\\|bclas3\\|cf\\|cfn\\|city\\|claim\\|claim-en\\|claim-or\\|claim-ts\\|class\\|cn-dc\\|county\\|cp-dc\\|cpc\\|cpc-class\\|cpc-group\\|cpc-section\\|cpc-subclass\\|cpc-subgroup\\|ct\\|ct-ad\\|ct-ap\\|ct-auth\\|ct-code\\|ct-no\\|ct-pd\\|ct-times\\|ctfw\\|ctfw-ad\\|ctfw-ap\\|ctfw-auth\\|ctfw-no\\|ctfw-pd\\|ctfw-times\\|ctnp\\|ctyear\\|customs-flag\\|des\\|des-or\\|doc-dc\\|ecd\\|ecla\\|ecla-class\\|ecla-group\\|ecla-section\\|ecla-subclass\\|ecla-subgroup\\|ex\\|ex-time\\|expiry-date\\|fa-country\\|fam-dc\\|fc-dc\\|fct\\|fct-ap\\|fct-times\\|fctfw\\|fctfw-ap\\|fctfw-times\\|fi\\|filing-lang\\|ft\\|full\\|grant-date\\|ian\\|if\\|ifn\\|in\\|in-add\\|in-ap\\|in-city\\|in-country\\|in-state\\|ipc\\|ipc-class\\|ipc-group\\|ipc-main\\|ipc-section\\|ipc-subclass\\|ipc-subgroup\\|ipcm-class\\|ipcm-group\\|ipcmaintt\\|ipcm-section\\|ipcm-subclass\\|ipn\\|lawtxt\\|lee\\|lee-current\\|lg\\|lgc\\|lgd\\|lge\\|lgf\\|lgi-case\\|lgi-court\\|lgi-date\\|lgi-defendant\\|lgi-firm\\|lgi-flag\\|lgi-judge\\|lgi-no\\|lgi-party\\|lgi-plantiff\\|lgi-region\\|lgi-text\\|lgi-ti\\|lgi-type\\|lgiyear\\|licence-flag\\|license-cs\\|license-date\\|license-no\\|license-sd\\|license-stage\\|license-td\\|license-type\\|licenseyear\\|loc\\|lor\\|mf\\|mfn\\|no-claim\\|number\\|page\\|patent-life\\|patentee\\|patenteenor\\|pc-cn\\|pd\\|pdm\\|pdy\\|pee\\|pee-current\\|pfex-time\\|phc\\|pledge-cd\\|pledge-date\\|pledge-no\\|pledge-rd\\|pledge-stage\\|pledge-term\\|pledge-type\\|pledgeyear\\|plege-flag\\|pn\\|pnc\\|pnk\\|pnn\\|por\\|pr\\|pr-au\\|pr-date\\|prd\\|prn\\|pryear\\|pt\\|pu-date\\|re-ap\\|ree-flag\\|ref-dc\\|reward-level\\|reward-name\\|reward-session\\|ri-ae\\|ri-ap\\|ri-basis\\|ri-date\\|ri-inernal\\|ri-leader\\|ri-me\\|ri-num\\|ri-point\\|ri-text\\|ri-type\\|riyear\\|status\\|status-lite\\|std-company\\|std-etsi\\|std-flag\\|std-num\\|subex-date\\|ti\\|ti-otlang\\|ti-ts\\|tiab\\|tiabc\\|tio\\|uc\\|uc-main\\|vlstar\\|who\\|ap\\|ap-or\\|ap-ot\\|ap-ts\\|apnor\\|aee\\|aor\\|assign-party\\|aeenor\\|ap-otadd\\|in\\|lor\\|lee\\|lgi-party\\|at\\|agc\\|re-ap\\|in-ap\\|ri-me\\|ri-ae\\|ri-leader\\|por\\|pee\\|ex\\|ap-type\\|who\\|patentee\\|patenteenor\\|aptt\\|ap-ortt\\|ap-ottt\\|ap-tstt\\|apnortt\\|aeett\\|aortt\\|assign-partytt\\|aeenortt\\|ap-otaddtt\\|intt\\|lortt\\|leett\\|lgi-partytt\\|attt\\|agctt\\|re-aptt\\|in-aptt\\|ri-mett\\|ri-aett\\|ri-leadertt\\|portt\\|peett\\|extt\\|ap-typett\\|whott\\|patenteett\\|patenteenortt\\)\\s*=", " ", "g")')
     " 删除字段名称
