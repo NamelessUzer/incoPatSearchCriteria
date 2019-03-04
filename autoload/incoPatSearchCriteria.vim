@@ -131,7 +131,7 @@ function! incoPatSearchCriteria#SortInBracket() range
             call add(l:res, l:_indent . l:line)
         elseif strlen(get(l:res, -1)) < 100
             let l:res[-1] .= " or " . l:line
-        else 
+        else
             call add(l:res, l:_indent[:-5] . "or  " . l:line)
         endif
     endfor
