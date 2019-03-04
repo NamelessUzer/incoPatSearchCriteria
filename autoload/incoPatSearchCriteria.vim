@@ -115,25 +115,35 @@ function! incoPatSearchCriteria#SplitLineWithOR() range
     unlet l:unnamed
 endfunction
 
-function! incoPatSearchCriteria#SortIPC() range
+function! incoPatSearchCriteria#SortInBracket() range
     let l:savePos = getpos(".")
     let l:unnamed = getreg('"')
-    let l:_indent = repeat(" ", indent(a:firstline))
-    let l:lines = getline(a:firstline, a:lastline)
+    execute "normal! vi)\<esc>"
+    let l:_indent = repeat(" ", indent("'<"))
+    normal! gvd
+    let l:lines = sort(uniq(split(trim(getreg('"')), '\c\(\n\|\(\s*\<or\>\s*\)\)\+'), "i"), "i")
+    call filter(l:lines, 'strlen(v:val)')
+    call map(l:lines, 'substitute(v:val, "\\c\[a-z]\\+", "\\u\\L&", "g")')
+    let l:maxWidth = max(map(deepcopy(l:lines), 'strlen(v:val)'))
     call map(l:lines, 'trim(v:val)')
-    let l:string = join(l:lines, ' or ')
-    let l:lines = sort(uniq(split(l:string, '\(\s*\<or\>\s*\)\+'), "i"), "i")
-    echom len(l:lines) . " IPC keywords found."
-    let l:string = l:_indent . join(l:lines, ' or ')
-    call setline(line('.'), l:string)
-    if a:firstline < a:lastline
-        silent execute (a:firstline + 1) . "delete" . (a:lastline - a:firstline)
-    endif
+    let l:res = []
+    for l:line in l:lines
+        if len(l:res) == 0
+            call add(l:res, l:_indent . l:line)
+        elseif strlen(get(l:res, -1)) < l:maxWidth
+            let l:res[-1] .= " or " . l:line
+        else 
+            call add(l:res, l:_indent[:-5] . "or  " . l:line)
+        endif
+    endfor
+    let @" = join(l:res, "\n") . "\n"
+    normal! P
     call setpos(".", l:savePos)
     call setreg('"', l:unnamed)
     unlet l:_indent
     unlet l:lines
-    unlet l:string
+    unlet l:maxWidth
+    unlet l:res
     unlet l:unnamed
 endfunction
 
