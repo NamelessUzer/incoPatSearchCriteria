@@ -122,15 +122,14 @@ function! incoPatSearchCriteria#SortInBracket() range
     let l:_indent = repeat(" ", indent("'<"))
     normal! gvd
     let l:lines = sort(uniq(split(trim(getreg('"')), '\c\(\n\|\(\s*\<or\>\s*\)\)\+'), "i"), "i")
+    call map(l:lines, 'trim(v:val)')
     call filter(l:lines, 'strlen(v:val)')
     call map(l:lines, 'substitute(v:val, "\\c\[a-z]\\+", "\\u\\L&", "g")')
-    let l:maxWidth = max(map(deepcopy(l:lines), 'strlen(v:val)'))
-    call map(l:lines, 'trim(v:val)')
     let l:res = []
     for l:line in l:lines
         if len(l:res) == 0
             call add(l:res, l:_indent . l:line)
-        elseif strlen(get(l:res, -1)) < l:maxWidth
+        elseif strlen(get(l:res, -1)) < 100
             let l:res[-1] .= " or " . l:line
         else 
             call add(l:res, l:_indent[:-5] . "or  " . l:line)
@@ -142,7 +141,6 @@ function! incoPatSearchCriteria#SortInBracket() range
     call setreg('"', l:unnamed)
     unlet l:_indent
     unlet l:lines
-    unlet l:maxWidth
     unlet l:res
     unlet l:unnamed
 endfunction
