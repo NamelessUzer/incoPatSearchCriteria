@@ -176,7 +176,10 @@ function! incoPatSearchCriteria#GenerateListFromSC()
     unlet l:save_register_plus
     unlet l:save_register_unnamed
     unlet l:lines
-endfunctio
+endfunction
+
+function! incoPatSearchCriteria#GetElements() range
+    let l:lines = getline(a:firstline, a:lastline)
     let l:lines = map(l:lines, 'substitute(v:val, "\\s*[:：\\[\\]()（）]\\+\\s*", " ", "g")')
     " 删除方括号和圆括号
     let l:lines = map(l:lines, 'substitute(v:val, "\\s\\+", " ", "g")')
