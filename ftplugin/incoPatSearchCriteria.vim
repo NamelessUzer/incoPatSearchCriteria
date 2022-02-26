@@ -145,7 +145,7 @@ function! s:FixSCinBracket(Sorted=v:false)
             call add(l:res, l:_indent[:-5] . "or  " . l:line)
         endif
     endfor
-    let @z = "(\n" . join(l:res, "\n") . "\n)"
+    let @z = "(\n" . join(l:res, "\n") . "\n" . l:_indent[:-9] . ")"
     normal! "zp
     let @z = l:save_register_plus
     unlet l:save_register_plus
