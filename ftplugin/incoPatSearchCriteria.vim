@@ -42,14 +42,14 @@ function! s:BeautySC() range
     unlet l:lines
 endfunction
 
-function! s:CopyOneline() range
+function! s:CopyOneLine() range
     let l:lines = getline(a:firstline, a:lastline)
     call map(l:lines, 's:PrettyLine(v:val)')
     let l:string = join(l:lines, "\n")
     let l:string = substitute(l:string, '\_s\+', " ", "g")
     let l:string = substitute(l:string, '[\(\[]\zs\_s\+', "", "g")
     let l:string = substitute(l:string, '\_s\+\ze[\)\]]', "", "g")
-    let @+ = substitute(l:string, '^\_s\+\|\_s\+$', "", "g")
+    let @+ = trim(l:string)
     echom "Oneline-incoPatSearchCriteria has been copied to clipboard!"
     unlet l:lines
 endfunction
@@ -82,7 +82,6 @@ function! s:JoinLinesWithOR() range
     unlet l:unnamed
 endfunction
 
-
 function! s:SplitLineWithOR() range
     let l:saveCursor = getpos(".")
     let l:unnamed = getreg('"')
@@ -113,7 +112,7 @@ function! s:GenerateSCFromList() range
     call map(l:lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
     call sort(uniq(l:lines, "i"), "i")
     let l:line = "who = (" . join(l:lines, ' or ') . ")"
-    call setline(".", l:line)
+    call append(line("."), l:line)
     " call setpos(".", [0, 1, 1, 0])
     call setreg('"', l:unnamed)
     unlet l:lines
@@ -169,20 +168,19 @@ function! s:GetElements() range
     unlet l:lines
 endfunction
 
-command! -nargs=0 -range=% BeautySC             : <line1>,<line2>call <SID>BeautySC()
-command! -nargs=0 -range   JoinLinesWithOR      : <line1>,<line2>call <SID>JoinLinesWithOR()
-command! -nargs=0 -range   SplitLinesWithOR     : <line1>,<line2>call <SID>SplitLineWithOR()
-command! -nargs=0 -range=% GetElements          : <line1>,<line2>call <SID>GetElements()
-command! -nargs=0 -range=% CopyOneline          : <line1>,<line2>call <SID>CopyOneline()
-command! -nargs=0 GenerateSCFromList            : call <SID>GenerateSCFromList()
-command! -nargs=0 FixSCinBracket                : call <SID>FixSCinBracket(v:false)
-command! -nargs=0 SortSCinBracket               : call <SID>FixSCinBracket(v:true)
+command!       -nargs=0 -range=% BeautySC         : <line1>,<line2>call <SID>BeautySC()
+command!       -nargs=0 -range   JoinLinesWithOR  : <line1>,<line2>call <SID>JoinLinesWithOR()
+command!       -nargs=0 -range   SplitLinesWithOR : <line1>,<line2>call <SID>SplitLineWithOR()
+command!       -nargs=0 -range=% GetElements      : <line1>,<line2>call <SID>GetElements()
+command!       -nargs=0 -range=% CopyOneLine      : <line1>,<line2>call <SID>CopyOneLine()
+command!       -nargs=0 GenerateSCFromList        : call <SID>GenerateSCFromList()
+command! -bang -nargs=0 FixSCinBracket            : call <SID>FixSCinBracket(<bang>0)
 
-nnoremap <silent> <Plug>BeautySC             :BeautySC<cr>
-nnoremap <silent> <Plug>JoinLinesWithOR      :JoinLinesWithOR<cr>
-nnoremap <silent> <Plug>SplitLinesWithOR     :SplitLinesWithOR<cr>
-nnoremap <silent> <Plug>GetElements          :GetElements<cr>
-nnoremap <silent> <Plug>CopyOneline          :CopyOneline<cr>
-nnoremap <silent> <Plug>GenerateSCFromList   :GenerateSCFromList<cr>
-nnoremap <silent> <Plug>FixSCinBracket       :FixSCinBracket<cr>
-nnoremap <silent> <Plug>SortSCinBracket      :SortSCinBracket<cr>
+nnoremap <silent> <Plug>BeautySC           : BeautySC<cr>
+nnoremap <silent> <Plug>JoinLinesWithOR    : JoinLinesWithOR<cr>
+nnoremap <silent> <Plug>SplitLinesWithOR   : SplitLinesWithOR<cr>
+nnoremap <silent> <Plug>GetElements        : GetElements<cr>
+nnoremap <silent> <Plug>CopyOneLine        : CopyOneLine<cr>
+nnoremap <silent> <Plug>GenerateSCFromList : GenerateSCFromList<cr>
+nnoremap <silent> <Plug>FixSCinBracket     : FixSCinBracket<cr>
+nnoremap <silent> <Plug>SortSCinBracket    : FixSCinBracket!<cr>
