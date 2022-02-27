@@ -105,22 +105,23 @@ endfunction
 function! s:BeautifyItem(item)
   let item = trim(a:item, "\"\' \t")
   let FIPattern = '^\([A-Z]\d\+[A-Z]\) \(\d\+/\d\+\)\%( \(\d\+\)\)\?\%( \([A-Z]\)\)\?$'
-  let res = ""
   if item =~? FIPattern
     let mlst = matchlist(item, FIPattern)
     let head = join(mlst[1:2], "")
     let tail = join(mlst[3:], "")
     if tail == ""
-      let res = head
+      let item = head
     else
-      let res = head . "." . tail
+      let item = head . "." . tail
     endif
-    let res = substitute(res, '\w\+', '\U&', "g")
+  end
+  if item =~? '\<\([A-HY]\d\{2}[A-Z]\d\{1,4}/\d\{1,6}\([A-Z]\|\.\(\d*[A-Z]\|\d\+\)\)\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\?\|[A-HY]\d\{2}[A-Z]\|[A-HY]\d\{2}\|[A-HY]\)\>'
+    let item = substitute(item, '\w\+', '\U&', "g")
   else
-    let res = substitute(item, '\w\+', '\L\u&', "g")
-    let res = '"' . res .'"'
+    let item = substitute(item, '\w\+', '\L\u&', "g")
+    let item = '"' . item .'"'
   endif
-  return res
+  return item
 endfunction
 
 function! BeautifyItems(lst)
