@@ -27,7 +27,7 @@ function! s:PrettyLine(line)
     return l:line
 endfunction
 
-function! s:BeautySC() range
+function! s:BeautifySC() range
     let l:saveCursor = getpos(".")
     let l:unnamed = getreg('"')
     let l:lines = getline(1, '$')
@@ -102,22 +102,42 @@ function! s:SplitLineWithOR() range
     unlet l:unnamed
 endfunction
 
-function! s:GenerateSCFromList() range
-    let l:unnamed = getreg('"')
-    normal! dip
-    let l:lines = getreg('"')
+function! s:BeautifyFI(strFI)
+  let strFI = trim(a:strFI, "\"\' \t")
+  let FIPattern = '^\([A-Z]\d\+[A-Z]\) \(\d\+/\d\+\)\%( \(\d\+\)\)\?\%( \([A-Z]\)\)\?$'
+  let res = ""
+  if strFI =~? FIPattern
+    let mlst = matchlist(strFI, FIPattern)
+    let head = join(mlst[1:2], "")
+    let tail = join(mlst[3:], "")
+    if tail == ""
+      let res = head
+    else
+      let res = head . "." . tail
+    endif
+    let res = substitute(res, '\w\+', '\U&', "g")
+  else
+    let res = substitute(strFI, '\w\+', '\L\u&', "g")
+  endif
+  return res
+endfunction
+
+function! s:PasteListInClipboard()
+    let l:lines = split(getreg('+'), '[\r\n]\+')
     call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
-    call map(l:lines, 'substitute(v:val, "[\\r\\n]", " ", "g")')
+    call map(l:lines, 'substitute(v:val, "[\\r\\n]\\+", "\n", "g")')
     call map(l:lines, 'substitute(v:val, "\\d\\{1,2}\.\\d\\{1,2}%$", "", "g")')
+    let temp = []
+    for line in l:lines
+      let i = s:BeautifyFI(line)
+      if index(temp, i) == -1
+        call add(temp, i)
+      endif
+    endfor
+    let l:lines = temp
     call map(l:lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
-    call sort(uniq(l:lines, "i"), "i")
-    let l:line = "who = (" . join(l:lines, ' or ') . ")"
-    call append(line("."), l:line)
+    call append(line("."), l:lines)
     " call setpos(".", [0, 1, 1, 0])
-    call setreg('"', l:unnamed)
-    unlet l:lines
-    unlet l:line
-    unlet l:unnamed
 endfunction
 
 function! s:FixSCinBracket(Sorted=v:false)
@@ -130,7 +150,6 @@ function! s:FixSCinBracket(Sorted=v:false)
     call map(l:lines, 'trim(v:val)')
     call filter(l:lines, 'strlen(v:val)')
     call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
-    call map(l:lines, 'substitute(v:val, "\\w\\+", "\\L\\u&", "g")')
     if a:Sorted
       call sort(l:lines, "i")
     endif
@@ -168,19 +187,21 @@ function! s:GetElements() range
     unlet l:lines
 endfunction
 
-command!       -nargs=0 -range=% BeautySC         : <line1>,<line2>call <SID>BeautySC()
+command!       -nargs=0 -range=% BeautifySC       : <line1>,<line2>call <SID>BeautifySC()
 command!       -nargs=0 -range   JoinLinesWithOR  : <line1>,<line2>call <SID>JoinLinesWithOR()
 command!       -nargs=0 -range   SplitLinesWithOR : <line1>,<line2>call <SID>SplitLineWithOR()
 command!       -nargs=0 -range=% GetElements      : <line1>,<line2>call <SID>GetElements()
 command!       -nargs=0 -range=% CopyOneLine      : <line1>,<line2>call <SID>CopyOneLine()
-command!       -nargs=0 GenerateSCFromList        : call <SID>GenerateSCFromList()
+command!       -nargs=0 PasteListInClipboard      : call <SID>PasteListInClipboard()
 command! -bang -nargs=0 FixSCinBracket            : call <SID>FixSCinBracket(<bang>0)
 
-nnoremap <silent> <Plug>BeautySC           : BeautySC<cr>
-nnoremap <silent> <Plug>JoinLinesWithOR    : JoinLinesWithOR<cr>
-nnoremap <silent> <Plug>SplitLinesWithOR   : SplitLinesWithOR<cr>
-nnoremap <silent> <Plug>GetElements        : GetElements<cr>
-nnoremap <silent> <Plug>CopyOneLine        : CopyOneLine<cr>
-nnoremap <silent> <Plug>GenerateSCFromList : GenerateSCFromList<cr>
-nnoremap <silent> <Plug>FixSCinBracket     : FixSCinBracket<cr>
-nnoremap <silent> <Plug>SortSCinBracket    : FixSCinBracket!<cr>
+nnoremap <silent> <Plug>BeautifySC           : BeautifySC<cr>
+nnoremap <silent> <Plug>JoinLinesWithOR      : JoinLinesWithOR<cr>
+vnoremap <silent> <Plug>JoinLinesWithOR      : JoinLinesWithOR<cr>
+nnoremap <silent> <Plug>SplitLinesWithOR     : SplitLinesWithOR<cr>
+vnoremap <silent> <Plug>SplitLinesWithOR     : SplitLinesWithOR<cr>
+nnoremap <silent> <Plug>GetElements          : GetElements<cr>
+nnoremap <silent> <Plug>CopyOneLine          : CopyOneLine<cr>
+nnoremap <silent> <Plug>PasteListInClipboard : PasteListInClipboard<cr>
+nnoremap <silent> <Plug>FixSCinBracket       : FixSCinBracket<cr>
+nnoremap <silent> <Plug>SortSCinBracket      : FixSCinBracket!<cr>
