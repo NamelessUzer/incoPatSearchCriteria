@@ -102,12 +102,12 @@ function! s:SplitLineWithOR() range
     unlet l:unnamed
 endfunction
 
-function! s:BeautifyFI(strFI)
-  let strFI = trim(a:strFI, "\"\' \t")
+function! s:BeautifyItem(item)
+  let item = trim(a:item, "\"\' \t")
   let FIPattern = '^\([A-Z]\d\+[A-Z]\) \(\d\+/\d\+\)\%( \(\d\+\)\)\?\%( \([A-Z]\)\)\?$'
   let res = ""
-  if strFI =~? FIPattern
-    let mlst = matchlist(strFI, FIPattern)
+  if item =~? FIPattern
+    let mlst = matchlist(item, FIPattern)
     let head = join(mlst[1:2], "")
     let tail = join(mlst[3:], "")
     if tail == ""
@@ -117,19 +117,26 @@ function! s:BeautifyFI(strFI)
     endif
     let res = substitute(res, '\w\+', '\U&', "g")
   else
-    let res = substitute(strFI, '\w\+', '"\L\u&"', "g")
+    let res = substitute(item, '\w\+', '\L\u&', "g")
+    let res = '"' . res .'"'
   endif
   return res
 endfunction
 
+function! BeautifyItems(lst)
+  let l:lines = a:lst
+  call map(l:lines, 'trim(v:val)')
+  call filter(l:lines, 'strlen(v:val)')
+  call filter(l:lines, 'v:val !~ "隐藏\\|不公开"')
+  call map(l:lines, 'substitute(v:val, "\\d\\{2}\.\\d\\{2}%$", "", "g")')
+  call map(l:lines, 's:BeautifyItem(v:val)')
+  return l:lines
+endfunction
+
 function! s:PasteListInClipboard()
     let l:lines = split(getreg('+'), '[\r\n]\+')
-    call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
-    call map(l:lines, 'substitute(v:val, "[\\r\\n]\\+", "\n", "g")')
-    call map(l:lines, 'substitute(v:val, "\\d\\{1,2}\.\\d\\{1,2}%$", "", "g")')
-    call map(l:lines, 's:BeautifyFI(v:val)')
+    let l:lines = BeautifyItems(l:lines)
     call append(line("."), l:lines)
-    " call setpos(".", [0, 1, 1, 0])
 endfunction
 
 function! s:FixSCinBracket(Sorted=v:false)
@@ -139,9 +146,7 @@ function! s:FixSCinBracket(Sorted=v:false)
     normal! gv"zd
     let l:line = trim(@z, "()")
     let l:lines = split(l:line, '\c\s*\(\<or\>\|[\r\n]\)\+\s*')
-    call map(l:lines, 'trim(v:val)')
-    call filter(l:lines, 'strlen(v:val)')
-    call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
+    let l:lines = BeautifyItems(l:lines)
     if a:Sorted
       call sort(l:lines, "i")
     endif
