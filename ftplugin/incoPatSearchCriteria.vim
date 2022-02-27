@@ -117,7 +117,7 @@ function! s:BeautifyFI(strFI)
     endif
     let res = substitute(res, '\w\+', '\U&', "g")
   else
-    let res = substitute(strFI, '\w\+', '\L\u&', "g")
+    let res = substitute(strFI, '\w\+', '"\L\u&"', "g")
   endif
   return res
 endfunction
@@ -127,15 +127,7 @@ function! s:PasteListInClipboard()
     call filter(l:lines, 'v:val !~ "^\\s*\\d\\|隐藏\\|不公开\\|^\\s*$"')
     call map(l:lines, 'substitute(v:val, "[\\r\\n]\\+", "\n", "g")')
     call map(l:lines, 'substitute(v:val, "\\d\\{1,2}\.\\d\\{1,2}%$", "", "g")')
-    let temp = []
-    for line in l:lines
-      let i = s:BeautifyFI(line)
-      if index(temp, i) == -1
-        call add(temp, i)
-      endif
-    endfor
-    let l:lines = temp
-    call map(l:lines, 'substitute(v:val, "^[ \"]*\\|[ \"]*$", "\"", "g")')
+    call map(l:lines, 's:BeautifyFI(v:val)')
     call append(line("."), l:lines)
     " call setpos(".", [0, 1, 1, 0])
 endfunction
