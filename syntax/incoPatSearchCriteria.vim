@@ -18,7 +18,7 @@ syntax keyword Keyword and or not to
 syntax match scOperator "="
 syntax match scConnector "\c([1-9]\?[wn]\|sen)"
 syntax match scKEY "\c\(r\|[a-z][-a-z]*[a-z0-9]\)\ze\s*=\s*[[(]\?"
-syntax match scPC '\<\([A-HY]\d\{2}[A-Z]\d\{1,4}/\d\{1,6}\([A-Z]\|\.\(\d*[A-Z]\|\d\+\)\)\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\?\|[A-HY]\d\{2}[A-Z]\|[A-HY]\d\{2}\|[A-HY]\)\>'
+syntax match scPC '\<\([A-HY]\d\{2}[A-Z]\d\{1,4}/\d\{1,6}\(\([A-Z]\d[A-Z]\d\?\|[A-Z]\d\?\)\|\.\(\d*[A-Z]\|\d\+\)\)\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\d{1,6}\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\?\|[A-HY]\d\{2}[A-Z]\?\|[A-HY]\)\>'
 syntax match scComment /#.*/
 syntax region scString matchgroup=scQuote start=/"/ end=/"/
 " syntax region scString matchgroup=scQuote start=/\v"/ skip=/\v\\./ end=/\v"/ " 因为检索式不支持转义的特殊字符，因此skip参数是不需要的
