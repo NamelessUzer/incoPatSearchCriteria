@@ -4,12 +4,12 @@ augroup filetype_incoPatSearchCriteria
     iabbrev 巨 and
     iabbrev 煌 or
     iabbrev 刷业务 not
-"
+
     " for Pinyin input method
     iabbrev 安定 and
     iabbrev 偶然 or
     iabbrev 农田 not
-"
+
     iabbrev （ (
     iabbrev ） )
 augroup END
@@ -115,11 +115,13 @@ function! s:BeautifyItem(item)
       let item = head . "." . tail
     endif
   end
-  if item =~? '\<\([A-HY]\d\{2}[A-Z]\d\{1,4}/\d\{1,6}\([A-Z]\|\.\(\d*[A-Z]\|\d\+\)\)\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\?\|[A-HY]\d\{2}[A-Z]\|[A-HY]\d\{2}\|[A-HY]\)\>'
+  if item =~? '\<\([A-HY]\d\{2}[A-Z]\d\{1,4}/\d\{1,6}\(\([A-Z]\d[A-Z]\d\?\|[A-Z]\d\?\)\|\.\(\d*[A-Z]\|\d\+\)\)\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\d{1,6}\?\|[A-HY]\d\{2}[A-Z]\d\{1,4}/\?\|[A-HY]\d\{2}[A-Z]\?\|[A-HY]\)\>'
     let item = substitute(item, '\w\+', '\U&', "g")
   else
     let item = substitute(item, '\w\+', '\L\u&', "g")
-    let item = '"' . item .'"'
+    if stridx(item, " ") >= 0
+      let item = '"' . item . '"'
+    endif
   endif
   return item
 endfunction
@@ -193,13 +195,13 @@ command!       -nargs=0 -range=% CopyOneLine      : <line1>,<line2>call <SID>Cop
 command!       -nargs=0 PasteListInClipboard      : call <SID>PasteListInClipboard()
 command! -bang -nargs=0 FixSCinBracket            : call <SID>FixSCinBracket(<bang>0)
 
-nnoremap <silent> <Plug>BeautifySC           : BeautifySC<cr>
-nnoremap <silent> <Plug>JoinLinesWithOR      : JoinLinesWithOR<cr>
-vnoremap <silent> <Plug>JoinLinesWithOR      : JoinLinesWithOR<cr>
-nnoremap <silent> <Plug>SplitLinesWithOR     : SplitLinesWithOR<cr>
-vnoremap <silent> <Plug>SplitLinesWithOR     : SplitLinesWithOR<cr>
-nnoremap <silent> <Plug>GetElements          : GetElements<cr>
-nnoremap <silent> <Plug>CopyOneLine          : CopyOneLine<cr>
-nnoremap <silent> <Plug>PasteListInClipboard : PasteListInClipboard<cr>
-nnoremap <silent> <Plug>FixSCinBracket       : FixSCinBracket<cr>
-nnoremap <silent> <Plug>SortSCinBracket      : FixSCinBracket!<cr>
+nnoremap <silent> <Plug>BeautifySC            : BeautifySC<cr>
+nnoremap <silent> <Plug>JoinLinesWithOR       : JoinLinesWithOR<cr>
+vnoremap <silent> <Plug>JoinLinesWithOR       : JoinLinesWithOR<cr>
+nnoremap <silent> <Plug>SplitLinesWithOR      : SplitLinesWithOR<cr>
+vnoremap <silent> <Plug>SplitLinesWithOR      : SplitLinesWithOR<cr>
+nnoremap <silent> <Plug>GetElements           : GetElements<cr>
+nnoremap <silent> <Plug>CopyOneLine           : CopyOneLine<cr>
+nnoremap <silent> <Plug>PasteListInClipboard  : PasteListInClipboard<cr>
+nnoremap <silent> <Plug>FixSCinBracket        : FixSCinBracket<cr>
+nnoremap <silent> <Plug>FixAndSortSCinBracket : FixSCinBracket!<cr>
