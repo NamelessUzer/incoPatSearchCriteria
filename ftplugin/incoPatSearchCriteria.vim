@@ -201,7 +201,9 @@ vnoremap <silent> <Plug>JoinLinesWithOR       : JoinLinesWithOR<cr>
 nnoremap <silent> <Plug>SplitLinesWithOR      : SplitLinesWithOR<cr>
 vnoremap <silent> <Plug>SplitLinesWithOR      : SplitLinesWithOR<cr>
 nnoremap <silent> <Plug>GetElements           : GetElements<cr>
+vnoremap <silent> <Plug>GetElements           : GetElements<cr>
 nnoremap <silent> <Plug>CopyOneLine           : CopyOneLine<cr>
+vnoremap <silent> <Plug>CopyOneLine           : CopyOneLine<cr>
 nnoremap <silent> <Plug>PasteListInClipboard  : PasteListInClipboard<cr>
 nnoremap <silent> <Plug>FixSCinBracket        : FixSCinBracket<cr>
 nnoremap <silent> <Plug>FixAndSortSCinBracket : FixSCinBracket!<cr>
