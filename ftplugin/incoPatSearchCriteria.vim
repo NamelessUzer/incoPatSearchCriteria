@@ -128,7 +128,7 @@ endfunction
 
 function! BeautifyItems(lst)
   let l:lines = a:lst
-  call map(l:lines, 'trim(v:val, "\\s　")')
+  call map(l:lines, 'trim(v:val')
   call filter(l:lines, 'strlen(v:val)')
   call filter(l:lines, 'v:val !~ "隐藏\\|不公开"')
   call map(l:lines, 'substitute(v:val, "\\( : \\)\\(\\d\\{2}\.\\d\\{2}%\\|\\d\\+\\)$", "", "g")')
